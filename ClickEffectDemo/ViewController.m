@@ -9,6 +9,12 @@
 #import "ViewController.h"
 
 @interface ViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *testLabel;
+@property (weak, nonatomic) IBOutlet UIButton *testBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *testImgView;
+
+@property (nonatomic,strong) UITapGestureRecognizer *singleTap1;
+@property (nonatomic,strong) UITapGestureRecognizer *singleTap2;
 
 @end
 
@@ -16,16 +22,43 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //添加单机手势
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(singleTapACTION:)];
-    self.view.userInteractionEnabled = YES;
-    [self.view addGestureRecognizer:singleTap];
+    
+    //给testLabel添加单机手势
+    _singleTap1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(singleTapACTION1:)];
+    self.testLabel.userInteractionEnabled = YES;
+    [self.testLabel addGestureRecognizer:_singleTap1];
+    
+    //给testImgView添加单机手势
+    _singleTap2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(singleTapACTION2:)];
+    self.testImgView.userInteractionEnabled = YES;
+    [self.testImgView addGestureRecognizer:_singleTap2];
     
 }
--(void)singleTapACTION:(UITapGestureRecognizer *)sender{
-    CGPoint location = [sender locationInView:sender.view];
+
+
+// 点击label
+-(void)singleTapACTION1:(UITapGestureRecognizer *)sender{
+    //防止手势冲突
+    [sender requireGestureRecognizerToFail:_singleTap2];
+    
+    CGPoint location = [sender locationInView:self.testLabel];
     NSLog(@"location:(%f,%f)",location.x,location.y);
-    [self addClickEffectForView:self.view withClickPointInSuperView:location withEffectColor:[UIColor yellowColor] removeWhenFinished:YES];
+    [self addClickEffectForView:self.testLabel withClickPointInSuperView:location withEffectColor:[UIColor redColor] removeWhenFinished:YES];
+}
+
+// 点击button
+- (IBAction)testBtnACTION:(UIButton *)sender {
+    [self addClickEffectForView:sender withClickPointInSuperView:CGPointMake(sender.bounds.size.width/2, sender.bounds.size.height/2) withEffectColor:[UIColor blueColor] removeWhenFinished:YES];
+}
+
+// 点击imageView
+-(void)singleTapACTION2:(UITapGestureRecognizer *)sender{
+    //防止手势冲突
+    [sender requireGestureRecognizerToFail:_singleTap1];
+    
+    CGPoint location = [sender locationInView:self.testImgView];
+    NSLog(@"location:(%f,%f)",location.x,location.y);
+    [self addClickEffectForView:self.testImgView withClickPointInSuperView:location withEffectColor:[UIColor orangeColor] removeWhenFinished:YES];
 }
 
 
